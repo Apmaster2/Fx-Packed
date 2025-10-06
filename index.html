@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Fx Packed</title>
+    <link rel="icon" href="assets/fx_packed_logo.png" sizes="16x16">
     <style>
         body {
             font-family: Arial;
@@ -11,48 +12,261 @@
         }
         input[type="number"], input[type="text"], input[type="checkbox"] {
             padding: 5px;
-            width: 80%;
+            width: 10%;
+            height: 20px;
             color: #FFFFFF;
-            background-color: #202020;
-            border: 1px solid #454545;
-            margin-bottom: 20px;
+            background-color: #383838;
+            border: 1px solid #4D4D4D;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+        }
+        select {
+            padding: 5px;
+            width: 10%;
+            height: 32px;
+            color: #FFFFFF;
+            background-color: #383838;
+            border: 1px solid #4D4D4D;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            margin-left: 0px;
+            margin-right: 85%;
+            display: text;
         }
         label {
-            display: block;
+            display: inline-block;
+            background-color: #202020;
+            border: 1px solid #454545;
+            height: 30px;
+            line-height: 28px;
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+            margin-right: -5px;
+            text-wrap-mode: nowrap;
         }
         button {
             display: block;
             padding: 5px;
             width: 10%;
             color: #FFFFFF;
-            background-color: #40C240;
-            border: 1px solid #56D656;
-            margin-bottom: 20px;
+            background-color: #37AB48;
+            border: 1px solid #44BD56;
+            margin-top: 20px;
         }
         button:hover {
-            background-color: #36B536;
+            background-color: #278F35;
+        }
+        .argument {
+            display: flex;
+            margin-top: 10px;
         }
         .output {
             padding: 5px;
-            width: 80%;
+            width: 50%;
             color: #FFFFFF;
             background-color: #202020;
             border: 1px solid #454545;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-left: 49%;
             visibility: hidden;
+        }
+        span {
+            padding-left: 9px;
+            padding-right: 9px;
         }
     </style>
 </head>
 <body>
-    <h1>Fx Packed</h1>
-    <h2>(by Discord: Apmaster3)</h2>
+    <h1>Fx Packed (by Discord: Apmaster3)</h1>
+    <label>
+        <span>
+            Fx Type
+        </span>
+    </label>
+    <select id="fxType" onchange="updateButtons()">
+        <option value="circle">Circle</option>
+        <option value="Sphere">Sphere</option>
+    </select>
+    <div class="argument">
+        <label>
+            <span>
+                Particle
+            </span>
+        </label>
+        <input id="particle" type="text" placeholder="minecraft:end_rod">
+    </div>
+
+
+
+
+    <div class="circleFx" id="circleFx">
+        <div class="argument">
+            <label>
+                <span>
+                    Radius
+                </span>
+            </label>
+            <input id="radius" type="number" placeholder=5 min=1 step=0.5>
+        </div>
+        <div class="argument">
+            <label>
+                <span>
+                    Particle Count
+                </span>
+            </label>
+            <input id="particleCount" type="number" placeholder=36 min=1 step=1>
+        </div>
+        <div class="argument">
+            <label>
+                <span>
+                    Axis
+                </span>
+            </label>
+            <select id="axis" onchange="updateDirection()">
+                <option value="horizontal">Horizontal</option>
+                <option value="vertical">Vertical</option>
+            </select>
+        </div>
+        <div class="argument" id="directions" style="display: none">
+            <label>
+                <span>
+                    Direction
+                </span>
+            </label>
+            <select id="direction">
+                <option value="x">X</option>
+                <option value="z">Z</option>
+            </select>
+        </div>
+        <div class="argument" onchange="updateDirection()">
+            <label>
+                <span>
+                    Coordinate Mode
+                </span>
+            </label>
+            <select id="mode">
+                <option value="world">World (~)</option>
+                <option value="local">Local (^)</option>
+            </select>
+        </div>
+        <div class="argument">
+            <label>
+                <span>
+                    Motion Type
+                </span>
+            </label>
+            <select id="motionType">
+                <option value="still">Still</option>
+            </select>
+        </div>
+    </div>
+    
+
+    
+    <button onclick="generateFx()">Generate</button>
+
+
+
+    <div class="output" id="output"></div>
+
 
 
 
     <script>
 
+        let output = "";
 
 
+
+
+        function updateButtons() {
+            const fxType = document.getElementById('fxType').value.trim();
+
+            document.getElementById('circleFx').style.display = 'none';
+
+            if(fxType == "circle") {
+                document.getElementById('circleFx').style.display = '';
+            }
+        }
+
+
+        function updateDirection() {
+            const axis = document.getElementById('axis').value.trim();
+            const mode = document.getElementById('mode').value.trim();
+
+            if(axis == "vertical" && mode == "world") {
+                document.getElementById('directions').style.display = '';
+            } else {
+                document.getElementById('directions').style.display = 'none';
+            }
+        }
+
+        function generateFx() {
+
+            const fxType = document.getElementById('fxType').value.trim();
+            const particle = document.getElementById('particle').value.trim();
+            const radius = document.getElementById('radius').value.trim();
+            const particleCount = document.getElementById('particleCount').value.trim();
+            const axis = document.getElementById('axis').value.trim();
+            const direction = document.getElementById('direction').value.trim();
+            const mode = document.getElementById('mode').value.trim();
+
+            document.getElementById('output').style.visibility = 'visible';
+
+            if(fxType == "circle") {
+                output = generateCircle(particle, radius, particleCount, axis, direction, mode);
+            }
+            
+            document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
+            navigator.clipboard.writeText(output);
+        }
+
+
+        function generateCircle(particle, radius, particleCount, axis, direction, mode) {
+            if(!particle) {particle = "minecraft:end_rod"}
+            if(!radius) {radius = 5}
+            if(!particleCount) {particleCount = 36}
+
+            let particles = "";
+
+            let symbol = "~";
+            
+
+            if(mode == "local") {
+                symbol = "^";
+            }
+
+            
+
+            for(let i = 0; i < particleCount; i++) {
+                //let angle = 360 / particleCount * i;
+                let intervalAngle = 2 * Math.PI * i / particleCount;
+
+                let x = 0;
+                let y = 0;
+                let z = 0;
+
+                if(axis == "horizontal") {
+                    x = (Math.cos(intervalAngle) * radius).toFixed(3);
+                    z = (Math.sin(intervalAngle) * radius).toFixed(3);
+
+                } else {
+                    if(mode == "world" && direction == "z") {
+                        z = (Math.cos(intervalAngle) * radius).toFixed(3);
+                    } else {
+                        x = (Math.cos(intervalAngle) * radius).toFixed(3);
+                    }
+                    y = (Math.sin(intervalAngle) * radius).toFixed(3);
+                }
+
+
+
+                particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`    
+            
+
+            }
+            return particles;
+        }
 
 
     </script>
