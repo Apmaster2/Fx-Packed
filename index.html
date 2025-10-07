@@ -138,7 +138,7 @@
                 <option value="z">Z</option>
             </select>
         </div>
-        <div class="argument" onchange="updateDirection()">
+        <div class="argument" id="coordinateMode" onchange="updateDirection()">
             <label>
                 <span>
                     Coordinate Mode
@@ -149,7 +149,7 @@
                 <option value="local">Local (^)</option>
             </select>
         </div>
-        <div class="argument">
+        <div class="argument"  onchange="motionTypeChange()">
             <label>
                 <span>
                     Motion Type
@@ -157,7 +157,17 @@
             </label>
             <select id="motionType">
                 <option value="still">Still</option>
+                <option value="outwards">Outwards</option>
+                <option value="inwards">Inwards</option>
             </select>
+        </div>
+        <div class="argument" id="motionVelocity" style="display: none">
+            <label>
+                <span>
+                    Velocity
+                </span>
+            </label>
+            <input id="velocity" type="number" placeholder=1 min=1 step=0.1>
         </div>
     </div>
     
@@ -177,6 +187,10 @@
         let output = "";
 
 
+        function motionTypeChange() {
+            updateDirection();
+            updateVelocity();
+        }
 
 
         function updateButtons() {
@@ -193,11 +207,24 @@
         function updateDirection() {
             const axis = document.getElementById('axis').value.trim();
             const mode = document.getElementById('mode').value.trim();
+            const motion = document.getElementById('motionType').value.trim();
 
-            if(axis == "vertical" && mode == "world") {
+            if(axis == "vertical" && mode == "world" && motion == "still") {
                 document.getElementById('directions').style.display = '';
             } else {
                 document.getElementById('directions').style.display = 'none';
+            }
+        }
+
+        function updateVelocity() {
+            const motion = document.getElementById('motionType').value.trim();
+
+            if(motion != "still") {
+                document.getElementById('coordinateMode').style.display = 'none';
+                document.getElementById('motionVelocity').style.display = '';
+            } else {
+                document.getElementById('coordinateMode').style.display = '';
+                document.getElementById('motionVelocity').style.display = 'none';
             }
         }
 
@@ -210,11 +237,13 @@
             const axis = document.getElementById('axis').value.trim();
             const direction = document.getElementById('direction').value.trim();
             const mode = document.getElementById('mode').value.trim();
+            const motion = document.getElementById('motionType').value.trim();
+            const velocity = document.getElementById('velocity').value.trim();
 
             document.getElementById('output').style.visibility = 'visible';
 
             if(fxType == "circle") {
-                output = generateCircle(particle, radius, particleCount, axis, direction, mode);
+                output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
             }
             
             document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
@@ -222,10 +251,11 @@
         }
 
 
-        function generateCircle(particle, radius, particleCount, axis, direction, mode) {
+        function generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity) {
             if(!particle) {particle = "minecraft:end_rod"}
             if(!radius) {radius = 5}
             if(!particleCount) {particleCount = 36}
+            if(!velocity) {velocity = 1}
 
             let particles = "";
 
@@ -239,7 +269,7 @@
             
 
             for(let i = 0; i < particleCount; i++) {
-                //let angle = 360 / particleCount * i;
+                let angle = 360 / particleCount * i;
                 let intervalAngle = 2 * Math.PI * i / particleCount;
 
                 let x = 0;
@@ -261,7 +291,28 @@
 
 
 
-                particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`    
+                if(motion == "still") {
+                    particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`   
+                } else if(motion == "outwards" || motion == "inwards") {
+                    let motionDirection = "";
+                    let motionDistance = "";
+                    if(motion == "inwards") {
+                        motionDirection = "-"
+                        motionDistance = radius;
+                    }
+                    switch(axis) {
+                        case "horizontal": {
+                            particles += `execute rotated ~${angle} 0 positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^ ^ ^${motionDirection}1000000 ${(0.0000001 * velocity).toFixed(8)} 0\n`
+                            break;
+                        }
+                        case "vertical": {
+                            particles += `execute rotated ~ ~${angle} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^ ^ ^${motionDirection}1000000 ${(0.0000001 * velocity).toFixed(8)} 0\n`
+                            break;
+                        }
+                    }
+                       
+                }
+ 
             
 
             }
