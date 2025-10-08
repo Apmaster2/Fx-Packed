@@ -8,53 +8,50 @@
         body {
             font-family: Arial;
             color: #FFFFFF;
-            background-color: #181818;
+            background-color: #212121;
         }
         input[type="number"], input[type="text"], input[type="checkbox"] {
             padding: 5px;
             width: 10%;
             height: 20px;
             color: #FFFFFF;
-            background-color: #383838;
-            border: 1px solid #4D4D4D;
-            border-top-right-radius: 3px;
-            border-bottom-right-radius: 3px;
+            background-color: #1A1A1A;
+            border: 1px solid #171717;
+            border-radius: 10px;
         }
         select {
             padding: 5px;
             width: 10%;
             height: 32px;
             color: #FFFFFF;
-            background-color: #383838;
-            border: 1px solid #4D4D4D;
-            border-top-right-radius: 3px;
-            border-bottom-right-radius: 3px;
-            margin-left: 0px;
-            margin-right: 85%;
+            background-color: #1A1A1A;
+            border: 1px solid #171717;
+            border-radius: 10px;
             display: text;
         }
         label {
-            display: inline-block;
-            background-color: #202020;
-            border: 1px solid #454545;
             height: 30px;
             line-height: 28px;
-            border-top-left-radius: 3px;
-            border-bottom-left-radius: 3px;
-            margin-right: -5px;
+            padding-right: 5px;
+            padding-left: 3px;
             text-wrap-mode: nowrap;
         }
         button {
-            display: block;
             padding: 5px;
             width: 10%;
             color: #FFFFFF;
-            background-color: #37AB48;
-            border: 1px solid #44BD56;
+            background-color: #2F8A3B;
+            border: 1px solid #1D6B27;
+            border-radius: 20px;
             margin-top: 20px;
         }
         button:hover {
-            background-color: #278F35;
+            background-color: #1D6B27;
+            border: 1px solid #13571C;
+        }
+        button:active {
+            transition: all 0.1s ease-in-out;
+            transform: scale(0.95);
         }
         .argument {
             display: flex;
@@ -62,26 +59,58 @@
         }
         .output {
             padding: 5px;
-            width: 50%;
-            color: #FFFFFF;
-            background-color: #202020;
-            border: 1px solid #454545;
+            color: #A6A6A6;
+            background-color: #1A1A1A;
+            border: 1px solid #171717;
+            border-radius: 10px;
             margin-top: 20px;
-            margin-left: 49%;
+            margin-left: 59%;
             visibility: hidden;
         }
-        span {
-            padding-left: 9px;
-            padding-right: 9px;
+        .tooltip {
+            position: relative;
+            text-decoration-color: #B0B0B0;
+            text-decoration-line: underline;
+            text-decoration-style: dotted;
+        }
+        .tooltip:hover {
+            text-decoration-style: solid;
+        }
+        .tooltip .tooltipText {
+            visibility: hidden;
+            bottom: 125%;
+            left: 50%;
+            position: absolute;
+            color: #A6A6A6;
+            background-color: #1A1A1A;
+            border: 1px solid #0D0D0D;
+            border-radius: 5px;
+            width: 325px;
+            height: 25px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out;
+        }
+        .tooltip:hover .tooltipText {
+            visibility: visible;
+            opacity: 1;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 0px;
+        }
+        h2 {
+            margin-top: 5px;
+            font-size: 20px;
+            color: #C2C2C2;
         }
     </style>
 </head>
 <body>
-    <h1>Fx Packed (by Discord: Apmaster3)</h1>
+    <h1>Fx Packed</h1>
+    <h2>By Ap (Apmaster3)</h2>
     <label>
-        <span>
-            Fx Type
-        </span>
+        Fx Type:
     </label>
     <select id="fxType" onchange="updateButtons()">
         <option value="circle">Circle</option>
@@ -90,7 +119,7 @@
     <div class="argument">
         <label>
             <span>
-                Particle
+                Particle:
             </span>
         </label>
         <input id="particle" type="text" placeholder="minecraft:end_rod">
@@ -102,25 +131,19 @@
     <div class="circleFx" id="circleFx">
         <div class="argument">
             <label>
-                <span>
-                    Radius
-                </span>
+                Radius:
             </label>
             <input id="radius" type="number" placeholder=5 min=1 step=0.5>
         </div>
         <div class="argument">
             <label>
-                <span>
-                    Particle Count
-                </span>
+                Particle Count:
             </label>
             <input id="particleCount" type="number" placeholder=36 min=1 step=1>
         </div>
         <div class="argument">
             <label>
-                <span>
-                    Axis
-                </span>
+                Axis:
             </label>
             <select id="axis" onchange="updateDirection()">
                 <option value="horizontal">Horizontal</option>
@@ -128,10 +151,9 @@
             </select>
         </div>
         <div class="argument" id="directions" style="display: none">
-            <label>
-                <span>
-                    Direction
-                </span>
+            <label class="tooltip">
+                Direction:
+                <span class="tooltipText">The direction the FX should be facing</span>
             </label>
             <select id="direction">
                 <option value="x">X</option>
@@ -139,10 +161,9 @@
             </select>
         </div>
         <div class="argument" id="coordinateMode" onchange="updateDirection()">
-            <label>
-                <span>
-                    Coordinate Mode
-                </span>
+            <label class="tooltip">
+                Coordinate Mode:
+                <span class="tooltipText">The way the FX is rotated</span>
             </label>
             <select id="mode">
                 <option value="world">World (~)</option>
@@ -151,21 +172,22 @@
         </div>
         <div class="argument"  onchange="motionTypeChange()">
             <label>
-                <span>
-                    Motion Type
-                </span>
+                Motion Type:
             </label>
             <select id="motionType">
                 <option value="still">Still</option>
                 <option value="outwards">Outwards</option>
                 <option value="inwards">Inwards</option>
+                <option value="upwards">Upwards</option>
+                <option value="downwards">Downwards</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
             </select>
         </div>
         <div class="argument" id="motionVelocity" style="display: none">
-            <label>
-                <span>
-                    Velocity
-                </span>
+            <label class="tooltip">
+                Velocity:
+                <span class="tooltipText">The speed at which the particles move at</span>
             </label>
             <input id="velocity" type="number" placeholder=1 min=1 step=0.1>
         </div>
@@ -291,25 +313,48 @@
 
 
 
+                const invertedMotionTypes = ["inwards", "downwards", "left"];
+                const distanceMotionTypes = ["inwards", "upwards", "downwards", "left", "right"];
+
                 if(motion == "still") {
                     particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`   
-                } else if(motion == "outwards" || motion == "inwards") {
+                } else {
+                    let motionX = "";
+                    let motionY = "";
+                    let motionZ = "";
                     let motionDirection = "";
                     let motionDistance = "";
-                    if(motion == "inwards") {
-                        motionDirection = "-"
+                    if(distanceMotionTypes.includes(motion)) {
                         motionDistance = radius;
                     }
-                    switch(axis) {
-                        case "horizontal": {
-                            particles += `execute rotated ~${angle} 0 positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^ ^ ^${motionDirection}1000000 ${(0.0000001 * velocity).toFixed(8)} 0\n`
-                            break;
+
+                    let yaw = "~";
+                    let pitch = "~";
+                    if(axis == "horizontal") {
+                        yaw = angle;
+                        pitch = "0";
+                    } else if(axis == "vertical") {
+                        pitch = angle;
+                    }
+
+                    if(motion == "outwards" || motion == "inwards") {
+                        motionZ = 1000000;
+                        if(invertedMotionTypes.includes(motion)) {
+                            motionZ = "-" + motionZ;
                         }
-                        case "vertical": {
-                            particles += `execute rotated ~ ~${angle} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^ ^ ^${motionDirection}1000000 ${(0.0000001 * velocity).toFixed(8)} 0\n`
-                            break;
+                    } else if(motion == "upwards" || motion == "downwards") {
+                        motionY = 1000000
+                        if(invertedMotionTypes.includes(motion)) {
+                            motionY = "-" + motionY;
+                        }
+                    } else if(motion == "left" || motion == "right") {
+                        motionX = 1000000
+                        if(invertedMotionTypes.includes(motion)) {
+                            motionX = "-" + motionX;
                         }
                     }
+                    particles += `execute rotated ${yaw} ${pitch} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
+
                        
                 }
  
