@@ -353,7 +353,8 @@
                             motionX = "-" + motionX;
                         }
                     }
-                    particles += `execute rotated ${yaw} ${pitch} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
+                    particles += `execute rotated ${yaw} ${pitch} run particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
+                    //particles += `execute rotated ${yaw} ${pitch} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
 
                        
                 }
