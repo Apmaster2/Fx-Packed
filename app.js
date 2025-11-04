@@ -10,11 +10,16 @@ function motionTypeChange() {
 
 function updateButtons() {
     const fxType = document.getElementById('fxType').value.trim();
-
-    document.getElementById('circleFx').style.display = 'none';
+    const circleFxOptions = document.querySelectorAll('[data-circleFx="true"]')
+    for (let i = 0; i < circleFxOptions.length - 1; i++){
+        circleFxOptions[i].style.display = 'none'
+    }
+    
 
     if(fxType == "circle") {
-        document.getElementById('circleFx').style.display = '';
+        for (let i = 0; i < circleFxOptions.length - 1; i++){
+        circleFxOptions[i].style.display = ''
+        }
     }
 }
 
@@ -59,6 +64,8 @@ function generateFx() {
 
     if(fxType == "circle") {
         output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
+    } else if(fxType == "rectangle"){
+        output = generateRectangle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
     }
             
     document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
