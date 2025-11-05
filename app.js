@@ -1,4 +1,8 @@
-
+const fxTypeMappings = {
+    "circle" : "2d",
+    "rectangle" : "2d",
+    "sphere" : "3d"
+}
 let output = "";
 
 
@@ -7,20 +11,26 @@ function motionTypeChange() {
     updateVelocity();
 }
 
+const hideElement = (element) => {
+    element.style.display = "none"
+}
+
+const showElement = (element) => {
+    element.style.display = ""
+}
+
 
 function updateButtons() {
     const fxType = document.getElementById('fxType').value.trim();
-    const circleFxOptions = document.querySelectorAll('[data-circleFx="true"]')
-    for (let i = 0; i < circleFxOptions.length - 1; i++){
-        circleFxOptions[i].style.display = 'none'
-    }
+    const circleFxOptions = document.querySelectorAll('[data-fxType="circle"]')
+    const rectangleFxOptions = document.querySelectorAll('[data-fxType="rectangle"]')
+    const twoDFxOptions = document.querySelectorAll('[data-fxType="2d"]')
     
-
-    if(fxType == "circle") {
-        for (let i = 0; i < circleFxOptions.length - 1; i++){
-        circleFxOptions[i].style.display = ''
-        }
-    }
+    fxType == "circle" ? circleFxOptions.forEach(showElement) : circleFxOptions.forEach(hideElement)
+    fxType == "rectangle" ? rectangleFxOptions.forEach(showElement) : rectangleFxOptions.forEach(hideElement)
+    fxTypeMappings[fxType] == "2d" ? twoDFxOptions.forEach(showElement) : twoDFxOptions.forEach(hideElement)
+    
+    motionTypeChange()
 }
 
 
@@ -328,3 +338,7 @@ const generateRectangle = (particle, size, particleCount, axis, direction, mode,
     return particles
 
 }
+
+
+// ON LOAD FUNCTIONS - To be called once document and script is loaded
+updateButtons()
