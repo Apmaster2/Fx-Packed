@@ -50,6 +50,9 @@ button:hover {
     display: flex;
     margin-top: 10px;
  }
+ .argument input{
+    margin-right: 10px;
+ }
 .output {
     padding: 5px;
     color: #A6A6A6;

@@ -1,4 +1,8 @@
-
+const fxTypeMappings = {
+    "circle" : "2d",
+    "rectangle" : "2d",
+    "sphere" : "3d"
+}
 let output = "";
 
 
@@ -7,15 +11,26 @@ function motionTypeChange() {
     updateVelocity();
 }
 
+const hideElement = (element) => {
+    element.style.display = "none"
+}
+
+const showElement = (element) => {
+    element.style.display = ""
+}
+
 
 function updateButtons() {
     const fxType = document.getElementById('fxType').value.trim();
-
-    document.getElementById('circleFx').style.display = 'none';
-
-    if(fxType == "circle") {
-        document.getElementById('circleFx').style.display = '';
-    }
+    const circleFxOptions = document.querySelectorAll('[data-fxType="circle"]')
+    const rectangleFxOptions = document.querySelectorAll('[data-fxType="rectangle"]')
+    const twoDFxOptions = document.querySelectorAll('[data-fxType="2d"]')
+    
+    fxType == "circle" ? circleFxOptions.forEach(showElement) : circleFxOptions.forEach(hideElement)
+    fxType == "rectangle" ? rectangleFxOptions.forEach(showElement) : rectangleFxOptions.forEach(hideElement)
+    fxTypeMappings[fxType] == "2d" ? twoDFxOptions.forEach(showElement) : twoDFxOptions.forEach(hideElement)
+    
+    motionTypeChange()
 }
 
 
@@ -48,6 +63,7 @@ function generateFx() {
     const fxType = document.getElementById('fxType').value.trim();
     const particle = document.getElementById('particle').value.trim();
     const radius = document.getElementById('radius').value.trim();
+    const size = [document.getElementById('size-x').value.trim(),document.getElementById('size-y').value.trim()]
     const particleCount = document.getElementById('particleCount').value.trim();
     const axis = document.getElementById('axis').value.trim();
     const direction = document.getElementById('direction').value.trim();
@@ -59,6 +75,8 @@ function generateFx() {
 
     if(fxType == "circle") {
         output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
+    } else if(fxType == "rectangle"){
+        output = generateRectangle(particle, size, particleCount, axis, direction, mode, motion, velocity);
     }
             
     document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
@@ -157,3 +175,168 @@ function generateCircle(particle, radius, particleCount, axis, direction, mode, 
     return particles;
 }
 
+const generateRectangle = (particle, size, particleCount, axis, direction, mode, motion, velocity) => {
+    if(!particle) {particle = "minecraft:end_rod"}
+    if(!size[0]) {size[0] = 5}
+    if(!size[1]) {size[1] = 5}
+    if(!particleCount) {particleCount = 20}
+    if(!velocity) {velocity = 1}
+
+    console.log(size)
+
+    let particles = "";
+
+    let symbol = "~";
+            
+
+    if(mode == "local") {
+        symbol = "^";
+    }
+
+    let perimeterSize = 2*size[0] + 2*size[1]
+    let widthPercent = size[0] / perimeterSize
+    let heightPercent = size[1] / perimeterSize
+    let widthParticles = Math.floor(particleCount * widthPercent)
+    let heightParticles = Math.floor(particleCount * heightPercent)
+    if (widthParticles < 1){
+        widthParticles = 1
+        heightParticles -= 1
+    }
+    if (heightParticles < 1){
+        heightParticles = 1
+        widthParticles -= 1
+    }
+    let side = 0
+    for (let i = 0; i < particleCount; i++){
+        let x = 0
+        let y = 0
+        let z = 0
+
+        sideOffset = 0
+        if (side >= 1){
+            sideOffset += widthParticles
+        }
+        if (side >= 2){
+            sideOffset += widthParticles
+        }
+        if (side >= 3){
+            sideOffset += heightParticles
+        }
+
+        if (axis == "horizontal"){
+           if (side == 0){
+            z = size[1] / 2
+            x = size[0] / 2
+            x -= ((i - sideOffset) / widthParticles) * size[0]
+           } else if (side == 1){
+            z = -size[1] / 2
+            x = size[0] / 2
+            x -= ((i - sideOffset) / widthParticles) * size[0]
+           } else if (side == 2){
+            x = -size[0] / 2
+            z = size[1] / 2
+            z -= ((i - sideOffset) / heightParticles) * size[1]
+           } else if (side == 3){
+            x = size[0] / 2
+            z = size[1] / 2
+            z -= ((i - sideOffset) / heightParticles) * size[1]
+           }
+        } else{
+            if (mode == "world" && direction == "z"){
+                if (side == 0){
+                    y = size[1] / 2
+                    x = size[0] / 2
+                    x -= ((i - sideOffset) / widthParticles) * size[0]
+                } else if (side == 1){
+                    y = -size[1] / 2
+                    x = size[0] / 2
+                    x -= ((i - sideOffset) / widthParticles) * size[0]
+                } else if (side == 2){
+                    x = -size[0] / 2
+                    y = size[1] / 2
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
+                } else if (side == 3){
+                    x = size[0] / 2
+                    y = size[1] / 2
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
+                }
+            } else {
+                if (side == 0){
+                    y = size[1] / 2
+                    z = size[0] / 2
+                    z -= ((i - sideOffset) / widthParticles) * size[0]
+                } else if (side == 1){
+                    y = -size[1] / 2
+                    z = size[0] / 2
+                    z -= ((i - sideOffset) / widthParticles) * size[0]
+                } else if (side == 2){
+                    z = -size[0] / 2
+                    y = size[1] / 2
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
+                } else if (side == 3){
+                    z = size[0] / 2
+                    y = size[1] / 2
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
+                }
+            }
+        }
+        if (side >= 2){
+            if (i - sideOffset >= heightParticles - 1){
+                side += 1
+            }
+        } else if (i - sideOffset >= widthParticles - 1){
+            side += 1
+        }
+        const invertedMotionTypes = ["inwards", "downwards", "left"];
+        const distanceMotionTypes = ["inwards", "upwards", "downwards", "left", "right"];
+
+        if(motion == "still") {
+            particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`   
+        } else {
+            let motionX = "";
+            let motionY = "";
+            let motionZ = "";
+            let motionDirection = "";
+            let motionDistance = "";
+            if(distanceMotionTypes.includes(motion)) {
+                motionDistance = radius;
+            }
+
+            let yaw = "~";
+            let pitch = "~";
+            if(axis == "horizontal") {
+                yaw = angle;
+                pitch = "0";
+            } else if(axis == "vertical") {
+                pitch = angle;
+            }
+
+            if(motion == "outwards" || motion == "inwards") {
+                motionZ = 1000000;
+                if(invertedMotionTypes.includes(motion)) {
+                    motionZ = "-" + motionZ;
+                }
+            } else if(motion == "upwards" || motion == "downwards") {
+                motionY = 1000000
+                if(invertedMotionTypes.includes(motion)) {
+                    motionY = "-" + motionY;
+                }
+            } else if(motion == "left" || motion == "right") {
+                motionX = 1000000
+                if(invertedMotionTypes.includes(motion)) {
+                    motionX = "-" + motionX;
+                }
+            }
+            particles += `execute rotated ${yaw} ${pitch} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
+
+                       
+        }
+ 
+    }
+    return particles
+
+}
+
+
+// ON LOAD FUNCTIONS - To be called once document and script is loaded
+updateButtons()
