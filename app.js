@@ -63,6 +63,7 @@ function generateFx() {
     const fxType = document.getElementById('fxType').value.trim();
     const particle = document.getElementById('particle').value.trim();
     const radius = document.getElementById('radius').value.trim();
+    const size = [document.getElementById('size-x').value.trim(),document.getElementById('size-y').value.trim()]
     const particleCount = document.getElementById('particleCount').value.trim();
     const axis = document.getElementById('axis').value.trim();
     const direction = document.getElementById('direction').value.trim();
@@ -75,7 +76,7 @@ function generateFx() {
     if(fxType == "circle") {
         output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
     } else if(fxType == "rectangle"){
-        output = generateRectangle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
+        output = generateRectangle(particle, size, particleCount, axis, direction, mode, motion, velocity);
     }
             
     document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
@@ -176,9 +177,12 @@ function generateCircle(particle, radius, particleCount, axis, direction, mode, 
 
 const generateRectangle = (particle, size, particleCount, axis, direction, mode, motion, velocity) => {
     if(!particle) {particle = "minecraft:end_rod"}
-    if(!size) {size = [5,5]}
+    if(!size[0]) {size[0] = 5}
+    if(!size[1]) {size[1] = 5}
     if(!particleCount) {particleCount = 20}
     if(!velocity) {velocity = 1}
+
+    console.log(size)
 
     let particles = "";
 
@@ -208,86 +212,80 @@ const generateRectangle = (particle, size, particleCount, axis, direction, mode,
         let y = 0
         let z = 0
 
+        sideOffset = 0
+        if (side >= 1){
+            sideOffset += widthParticles
+        }
+        if (side >= 2){
+            sideOffset += widthParticles
+        }
+        if (side >= 3){
+            sideOffset += heightParticles
+        }
+
         if (axis == "horizontal"){
-            if (side == 0){
-                z = -size[1] / 2
-                x = (-size[0] / 2) + (i / widthParticles)
-                if (i == widthParticles){
-                    side = 1
-                }
-            }
-            if (side == 1){
-                z = size[1] / 2
-                x = (-size[0] / 2) + ((i - widthParticles) / widthParticles)
-                if ((i - widthParticles) == widthParticles){
-                    side = 2
-                }
-            }
-            if (side == 2){
-                x = -size[0] / 2
-                z = (-size[1] / 2) + ((i - (2 * widthParticles)) / heightParticles)
-                if (i == widthParticles){
-                    side = 3
-                }
-            }
-            if (side == 3){
-                x = size[0] / 2
-                z = (-size[1] / 2) + ((i - ((2 * widthParticles) + heightParticles)) / heightParticles)
-            }
+           if (side == 0){
+            z = size[1] / 2
+            x = size[0] / 2
+            x -= (i - sideOffset) / widthParticles
+           } else if (side == 1){
+            z = -size[1] / 2
+            x = size[0] / 2
+            x -= (i - sideOffset) / widthParticles
+           } else if (side == 2){
+            x = -size[0] / 2
+            z = size[1] / 2
+            z -= (i - sideOffset) / heightParticles
+           } else if (side == 3){
+            x = size[0] / 2
+            z = size[1] / 2
+            z -= (i - sideOffset) / heightParticles
+           }
         } else{
             if (mode == "world" && direction == "z"){
                 if (side == 0){
-                    y = -size[1] / 2
-                    x = (-size[0] / 2) + (i / widthParticles)
-                    if (i == widthParticles){
-                        side = 1
-                    }
-                }
-                if (side == 1){
                     y = size[1] / 2
-                    x = (-size[0] / 2) + ((i - widthParticles) / widthParticles)
-                    if ((i - widthParticles) == widthParticles){
-                        side = 2
-                    }
-                }
-                if (side == 2){
-                    x = -size[0] / 2
-                    y = (-size[1] / 2) + ((i - (2 * widthParticles)) / heightParticles)
-                    if (i == widthParticles){
-                        side = 3
-                    }
-                }
-                if (side == 3){
                     x = size[0] / 2
-                    y = (-size[1] / 2) + ((i - ((2 * widthParticles) + heightParticles)) / heightParticles)
+                    x -= (i - sideOffset) / widthParticles
+                } else if (side == 1){
+                    y = -size[1] / 2
+                    x = size[0] / 2
+                    x -= (i - sideOffset) / widthParticles
+                } else if (side == 2){
+                    x = -size[0] / 2
+                    y = size[1] / 2
+                    y -= (i - sideOffset) / heightParticles
+                } else if (side == 3){
+                    x = size[0] / 2
+                    y = size[1] / 2
+                    y -= (i - sideOffset) / heightParticles
                 }
             } else {
                 if (side == 0){
-                    y = -size[1] / 2
-                    z = (-size[0] / 2) + (i / widthParticles)
-                    if (i == widthParticles){
-                        side = 1
-                    }
-                }
-                if (side == 1){
                     y = size[1] / 2
-                    z = (-size[0] / 2) + ((i - widthParticles) / widthParticles)
-                    if ((i - widthParticles) == widthParticles){
-                        side = 2
-                    }
-                }
-                if (side == 2){
-                    z = -size[0] / 2
-                    y = (-size[1] / 2) + ((i - (2 * widthParticles)) / heightParticles)
-                    if (i == widthParticles){
-                        side = 3
-                    }
-                }
-                if (side == 3){
                     z = size[0] / 2
-                    y = (-size[1] / 2) + ((i - ((2 * widthParticles) + heightParticles)) / heightParticles)
+                    z -= (i - sideOffset) / widthParticles
+                } else if (side == 1){
+                    y = -size[1] / 2
+                    z = size[0] / 2
+                    z -= (i - sideOffset) / widthParticles
+                } else if (side == 2){
+                    z = -size[0] / 2
+                    y = size[1] / 2
+                    y -= (i - sideOffset) / heightParticles
+                } else if (side == 3){
+                    z = size[0] / 2
+                    y = size[1] / 2
+                    y -= (i - sideOffset) / heightParticles
                 }
             }
+        }
+        if (side >= 2){
+            if (i - sideOffset > heightParticles){
+                side += 1
+            }
+        } else if (i - sideOffset > widthParticles){
+            side += 1
         }
         const invertedMotionTypes = ["inwards", "downwards", "left"];
         const distanceMotionTypes = ["inwards", "upwards", "downwards", "left", "right"];
