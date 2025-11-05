@@ -281,10 +281,10 @@ const generateRectangle = (particle, size, particleCount, axis, direction, mode,
             }
         }
         if (side >= 2){
-            if (i - sideOffset > heightParticles){
+            if (i - sideOffset >= heightParticles - 1){
                 side += 1
             }
-        } else if (i - sideOffset > widthParticles){
+        } else if (i - sideOffset >= widthParticles - 1){
             side += 1
         }
         const invertedMotionTypes = ["inwards", "downwards", "left"];
