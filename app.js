@@ -227,56 +227,56 @@ const generateRectangle = (particle, size, particleCount, axis, direction, mode,
            if (side == 0){
             z = size[1] / 2
             x = size[0] / 2
-            x -= (i - sideOffset) / widthParticles
+            x -= ((i - sideOffset) / widthParticles) * size[0]
            } else if (side == 1){
             z = -size[1] / 2
             x = size[0] / 2
-            x -= (i - sideOffset) / widthParticles
+            x -= ((i - sideOffset) / widthParticles) * size[0]
            } else if (side == 2){
             x = -size[0] / 2
             z = size[1] / 2
-            z -= (i - sideOffset) / heightParticles
+            z -= ((i - sideOffset) / heightParticles) * size[1]
            } else if (side == 3){
             x = size[0] / 2
             z = size[1] / 2
-            z -= (i - sideOffset) / heightParticles
+            z -= ((i - sideOffset) / heightParticles) * size[1]
            }
         } else{
             if (mode == "world" && direction == "z"){
                 if (side == 0){
                     y = size[1] / 2
                     x = size[0] / 2
-                    x -= (i - sideOffset) / widthParticles
+                    x -= ((i - sideOffset) / widthParticles) * size[0]
                 } else if (side == 1){
                     y = -size[1] / 2
                     x = size[0] / 2
-                    x -= (i - sideOffset) / widthParticles
+                    x -= ((i - sideOffset) / widthParticles) * size[0]
                 } else if (side == 2){
                     x = -size[0] / 2
                     y = size[1] / 2
-                    y -= (i - sideOffset) / heightParticles
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
                 } else if (side == 3){
                     x = size[0] / 2
                     y = size[1] / 2
-                    y -= (i - sideOffset) / heightParticles
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
                 }
             } else {
                 if (side == 0){
                     y = size[1] / 2
                     z = size[0] / 2
-                    z -= (i - sideOffset) / widthParticles
+                    z -= ((i - sideOffset) / widthParticles) * size[0]
                 } else if (side == 1){
                     y = -size[1] / 2
                     z = size[0] / 2
-                    z -= (i - sideOffset) / widthParticles
+                    z -= ((i - sideOffset) / widthParticles) * size[0]
                 } else if (side == 2){
                     z = -size[0] / 2
                     y = size[1] / 2
-                    y -= (i - sideOffset) / heightParticles
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
                 } else if (side == 3){
                     z = size[0] / 2
                     y = size[1] / 2
-                    y -= (i - sideOffset) / heightParticles
+                    y -= ((i - sideOffset) / heightParticles) * size[1]
                 }
             }
         }
