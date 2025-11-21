@@ -71,7 +71,6 @@ function generateFx() {
     const motion = document.getElementById('motionType').value.trim();
     const velocity = document.getElementById('velocity').value.trim();
 
-    document.getElementById('output').style.visibility = 'visible';
 
     if(fxType == "circle") {
         output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
@@ -79,7 +78,11 @@ function generateFx() {
         output = generateRectangle(particle, size, particleCount, axis, direction, mode, motion, velocity);
     }
             
-    document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
+    document.getElementById('output-text').innerText = output;
+    document.getElementById('generate-button').innerText = "Copied!";
+    setTimeout(() => {
+            document.getElementById('generate-button').innerText = "Generate";
+    }, 1000)
     navigator.clipboard.writeText(output);
 }
 
@@ -340,3 +343,15 @@ const generateRectangle = (particle, size, particleCount, axis, direction, mode,
 
 // ON LOAD FUNCTIONS - To be called once document and script is loaded
 updateButtons()
+
+
+
+
+document.addEventListener('mousemove', (e) => {
+    const obj = document.getElementById('output')
+    if(window.innerWidth - e.clientX < 650) {
+        obj.classList.add('show')
+    } else {
+        obj.classList.remove('show')
+    }
+})
