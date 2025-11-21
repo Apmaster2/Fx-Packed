@@ -15,6 +15,7 @@
     <select id="fxType" onchange="updateButtons()">
         <option value="circle">Circle</option>
         <option value="Sphere">Sphere</option>
+        <option value="rectangle">Rectangle</option>
     </select>
     <div class="argument">
         <label>
@@ -24,24 +25,26 @@
         </label>
         <input id="particle" type="text" placeholder="minecraft:end_rod">
     </div>
-
-
-
-
-    <div class="circleFx" id="circleFx">
-        <div class="argument">
+        <div class="argument" data-fxType="circle">
             <label>
                 Radius:
             </label>
             <input id="radius" type="number" placeholder=5 min=1 step=0.5>
         </div>
-        <div class="argument">
+        <div class="argument" data-fxType="rectangle">
+            <label>
+                Size:
+            </label>
+            <input id="size-x" type="number" placeholder=5 min=1 step=0.5>
+            <input id="size-y" type="number" placeholder=5 min=1 step=0.5>
+        </div>
+        <div class="argument" data-fxType="global">
             <label>
                 Particle Count:
             </label>
             <input id="particleCount" type="number" placeholder=36 min=1 step=1>
         </div>
-        <div class="argument">
+        <div class="argument" data-fxType="2d">
             <label>
                 Axis:
             </label>
@@ -50,7 +53,7 @@
                 <option value="vertical">Vertical</option>
             </select>
         </div>
-        <div class="argument" id="directions" style="display: none">
+        <div class="argument" id="directions" style="display: none" data-fxType="2d">
             <label class="tooltip">
                 Direction:
                 <span class="tooltipText">The direction the FX should be facing</span>
@@ -60,7 +63,7 @@
                 <option value="z">Z</option>
             </select>
         </div>
-        <div class="argument" id="coordinateMode" onchange="updateDirection()">
+        <div class="argument" id="coordinateMode" onchange="updateDirection()" data-fxType="global">
             <label class="tooltip">
                 Coordinate Mode:
                 <span class="tooltipText">The way the FX is rotated</span>
@@ -70,7 +73,7 @@
                 <option value="local">Local (^)</option>
             </select>
         </div>
-        <div class="argument"  onchange="motionTypeChange()">
+        <div class="argument"  onchange="motionTypeChange()" data-fxType="global">
             <label>
                 Motion Type:
             </label>
@@ -84,14 +87,13 @@
                 <option value="right">Right</option>
             </select>
         </div>
-        <div class="argument" id="motionVelocity" style="display: none">
+        <div class="argument" id="motionVelocity" style="display: none" data-fxType="global">
             <label class="tooltip">
                 Velocity:
                 <span class="tooltipText">The speed at which the particles move at</span>
             </label>
             <input id="velocity" type="number" placeholder=1 min=1 step=0.1>
         </div>
-    </div>
     
     <button onclick="generateFx()">Generate</button>
 
@@ -100,167 +102,7 @@
 
 
 
-    <script>
-
-        let output = "";
-
-
-        function motionTypeChange() {
-            updateDirection();
-            updateVelocity();
-        }
-
-
-        function updateButtons() {
-            const fxType = document.getElementById('fxType').value.trim();
-
-            document.getElementById('circleFx').style.display = 'none';
-
-            if(fxType == "circle") {
-                document.getElementById('circleFx').style.display = '';
-            }
-        }
-
-
-        function updateDirection() {
-            const axis = document.getElementById('axis').value.trim();
-            const mode = document.getElementById('mode').value.trim();
-            const motion = document.getElementById('motionType').value.trim();
-
-            if(axis == "vertical" && mode == "world" && motion == "still") {
-                document.getElementById('directions').style.display = '';
-            } else {
-                document.getElementById('directions').style.display = 'none';
-            }
-        }
-
-        function updateVelocity() {
-            const motion = document.getElementById('motionType').value.trim();
-
-            if(motion != "still") {
-                document.getElementById('coordinateMode').style.display = 'none';
-                document.getElementById('motionVelocity').style.display = '';
-            } else {
-                document.getElementById('coordinateMode').style.display = '';
-                document.getElementById('motionVelocity').style.display = 'none';
-            }
-        }
-
-        function generateFx() {
-
-            const fxType = document.getElementById('fxType').value.trim();
-            const particle = document.getElementById('particle').value.trim();
-            const radius = document.getElementById('radius').value.trim();
-            const particleCount = document.getElementById('particleCount').value.trim();
-            const axis = document.getElementById('axis').value.trim();
-            const direction = document.getElementById('direction').value.trim();
-            const mode = document.getElementById('mode').value.trim();
-            const motion = document.getElementById('motionType').value.trim();
-            const velocity = document.getElementById('velocity').value.trim();
-
-            document.getElementById('output').style.visibility = 'visible';
-
-            if(fxType == "circle") {
-                output = generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity);
-            }
-            
-            document.getElementById('output').innerText = 'Copied To Clipboard!\n\n' + output;
-            navigator.clipboard.writeText(output);
-        }
-
-
-        function generateCircle(particle, radius, particleCount, axis, direction, mode, motion, velocity) {
-            if(!particle) {particle = "minecraft:end_rod"}
-            if(!radius) {radius = 5}
-            if(!particleCount) {particleCount = 36}
-            if(!velocity) {velocity = 1}
-
-            let particles = "";
-
-            let symbol = "~";
-            
-
-            if(mode == "local") {
-                symbol = "^";
-            }
-
-            
-
-            for(let i = 0; i < particleCount; i++) {
-                let angle = 360 / particleCount * i;
-                let intervalAngle = 2 * Math.PI * i / particleCount;
-
-                let x = 0;
-                let y = 0;
-                let z = 0;
-
-                if(axis == "horizontal") {
-                    x = (Math.cos(intervalAngle) * radius).toFixed(3);
-                    z = (Math.sin(intervalAngle) * radius).toFixed(3);
-
-                } else {
-                    if(mode == "world" && direction == "z") {
-                        z = (Math.cos(intervalAngle) * radius).toFixed(3);
-                    } else {
-                        x = (Math.cos(intervalAngle) * radius).toFixed(3);
-                    }
-                    y = (Math.sin(intervalAngle) * radius).toFixed(3);
-                }
-
-
-
-                const invertedMotionTypes = ["inwards", "downwards", "left"];
-                const distanceMotionTypes = ["inwards", "upwards", "downwards", "left", "right"];
-
-                if(motion == "still") {
-                    particles += `particle ${particle} ${symbol}${x} ${symbol}${y} ${symbol}${z} 0 0 0 0 1\n`   
-                } else {
-                    let motionX = "";
-                    let motionY = "";
-                    let motionZ = "";
-                    let motionDirection = "";
-                    let motionDistance = "";
-                    if(distanceMotionTypes.includes(motion)) {
-                        motionDistance = radius;
-                    }
-
-                    let yaw = "~";
-                    let pitch = "~";
-                    if(axis == "horizontal") {
-                        yaw = angle;
-                        pitch = "0";
-                    } else if(axis == "vertical") {
-                        pitch = angle;
-                    }
-
-                    if(motion == "outwards" || motion == "inwards") {
-                        motionZ = 1000000;
-                        if(invertedMotionTypes.includes(motion)) {
-                            motionZ = "-" + motionZ;
-                        }
-                    } else if(motion == "upwards" || motion == "downwards") {
-                        motionY = 1000000
-                        if(invertedMotionTypes.includes(motion)) {
-                            motionY = "-" + motionY;
-                        }
-                    } else if(motion == "left" || motion == "right") {
-                        motionX = 1000000
-                        if(invertedMotionTypes.includes(motion)) {
-                            motionX = "-" + motionX;
-                        }
-                    }
-                    particles += `execute rotated ${yaw} ${pitch} positioned ^ ^ ^${motionDistance} run particle ${particle} ~ ~ ~ ^${motionX} ^${motionY} ^${motionZ} ${(0.0000001 * velocity).toFixed(8)} 0\n`
-
-                       
-                }
- 
-            
-
-            }
-            return particles;
-        }
-
-
+    <script src="app.js">
     </script>
 </body>
 </html>
